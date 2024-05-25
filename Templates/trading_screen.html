@@ -1,0 +1,13 @@
+
+<table>
+    <tr>
+        <th>Stock</th>
+        <th>Price</th>
+    </tr>
+    {% for stock, price in stock_prices.items %}
+    <tr>
+        <td>{{ stock }}</td>
+        <td>{{ price }}</td>
+    </tr>
+    {% endfor %}
+</table>
