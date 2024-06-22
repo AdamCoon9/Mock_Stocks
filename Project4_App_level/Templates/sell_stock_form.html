@@ -1,0 +1,6 @@
+<form id="sell_stock_form" method="post">
+    {% csrf_token %}
+    {{ sell_form.stock.label_tag }} {{ sell_form.stock }}
+    {{ sell_form.quantity.label_tag }} {{ sell_form.quantity }}
+    <button id="sell-btn">Confirm Sell</button> 
+</form>

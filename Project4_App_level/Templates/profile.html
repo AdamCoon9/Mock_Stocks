@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Profile</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</html>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'home' %}">Mock Stocks</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'create_profile_view' %}">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>   
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'transaction_history' %}">Transaction History</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'portfolio' %}">Portfolio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'stocks' %}">Stocks</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+<h1>{{ user.username }}'s Profile</h1>
+<p>Balance: {{ user_profile.balance }}</p>
+<form method="post" action="{% url 'reset_account' %}"onsubmit="return confirm('Are you sure you want to reset your account? This cannot be undone.');">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+</form>
+<a href="{% url 'reset_account' %}" class="btn btn-danger">Reset Account</a>
+</body>
+</html>

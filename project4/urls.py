@@ -16,10 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from . import views
+from Project4_App_level.Project4_App_level import views
+
 urlpatterns = [
+    path('', views.home, name='home'),
     path('admin/', admin.site.urls),
-    path('', include('App1.urls')),
-    path('register', views.register_request, name='register'),
-    path('ogin', views.login_request, name='login'),
+    path('', include('Project4_App_level.Project4_App_level.urls')),
+    path('register', views.register_and_create_profile, name='register'),
+    path('login', views.login_request, name='login'),
+    path('password_reset/', views.MyPasswordResetView.as_view(), name='password_reset'),
+    path('portfolio/', views.portfolio_view, name='portfolio'),
+    path('stocks/', views.Stock, name='stocks'),
+    path('buy_stock_view/', views.buy_stock_view, name='buy_stock_view'),
+    path('sell_stock_view/', views.sell_stock_view, name='sell_stock_view'),
+    path('profile/', views.profile, name='profile'),
 ]

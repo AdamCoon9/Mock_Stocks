@@ -1,0 +1,7 @@
+<form id="buy_stock_form" method="post">
+    {% csrf_token %}
+    {{ buy_form.stock.label_tag }} {{ buy_form.stock }} 
+    {{ buy_form.quantity.label_tag }} {{ buy_form.quantity }}
+    <!-- Render other fields as necessary -->
+    <button id="buy-btn">Confirm Buy</button> 
+</form>

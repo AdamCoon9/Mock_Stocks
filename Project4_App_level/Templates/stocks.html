@@ -1,0 +1,216 @@
+{% load static %}
+<html lang="en">
+<head>
+    <title>Stocks</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+      .trading-screen {
+          display: flex;
+      }
+      .instrument-list,
+      .instrument-data {
+          width: 50%;
+          padding: 20px;
+          box-sizing: border-box;
+      }
+  </style>
+</head>
+
+{% block content %}
+  <h2>Stocks</h2>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'home' %}">Mock Stocks</a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'create_profile_view' %}">Register</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>   
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'transaction_history' %}">Transaction History</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'portfolio' %}">Portfolio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+          </li>
+        </ul>
+        
+    </div>
+</nav>
+<div class="trading-screen">
+  <!-- Instrument List -->
+  <div class="instrument-list">
+    <label for="stocks">Choose a stock:</label>
+    <select name="stocks" id="stocks">
+      <option value="">Select one</option>
+      {% for stock in stocks %}
+        <option value="{{ stock.id }}">{{ stock.name }}</option>
+      {% endfor %}
+    </select>
+    <p id="price"></p>
+  </div>
+  <div class="instrument-data">
+    <!-- Chart Image -->
+    <img id="chart" src="" alt="Stock Chart">
+
+    <!-- Buy Stock Form -->
+    <div id="buy_stock_form">
+      <!-- The buy form will be inserted here by JavaScript -->
+    </div>
+
+    <!-- Sell Stock Form -->
+    <div id="sell_stock_form">
+      <!-- The sell form will be inserted here by JavaScript -->
+    </div>
+  </div>
+</div>
+
+{% csrf_token %}
+<script type="text/javascript">
+  
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+</script>
+<script>
+var buyStockViewUrl = "{% url 'buy_stock_view' %}";
+var sellStockViewUrl = "{% url 'sell_stock_view' %}";
+
+$(document).ready(function(){
+    $('#stocks').change(function(){  // This line triggers the function when the selected stock changes
+  
+        var url = "/get_stock_info/";
+        var stockId = $('#stocks').val();
+        console.log("Sending AJAX request to:", url);
+        console.log("Stock ID:", stockId);
+  
+        $.ajax({
+            url: url,
+            data: {
+                'stock_id': stockId
+            },
+            success: function(response_data) {
+                console.log("AJAX request successful. Data received:", response_data);
+                // Update your page with the returned data
+                $('#price').text(response_data.price);
+                
+                // Always show the sell form
+                $('#sell_stock_form').html(response_data.sell_form_html);
+                $('#sell_stock_form').show();  // Show the sell form
+                console.log("Showing sell form.");
+
+                // Always show the buy form
+                $('#buy_stock_form').html(response_data.buy_form_html);
+                $('#buy_stock_form').show();  // Show the buy form
+                console.log("Showing buy form.");
+
+                // Update the chart image
+                document.getElementById('chart').src = 'data:image/png;base64,' + response_data.image;
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log("AJAX request failed.");
+                console.log("Status:", textStatus);
+                console.log("Error:", errorThrown);
+            }
+        });
+    });
+  
+    // Prevent the page from refreshing when the form is submitted
+    $(document).on('submit', '#buy_stock_form', function(e){
+        e.preventDefault();
+        console.log("Buy form submitted");
+        console.log("Data being sent:", $(this).serialize());  // Debugging line
+
+        $.ajax({
+            url: buyStockViewUrl,
+            method: 'POST',
+            data: $(this).serialize(),
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('X-CSRFToken', csrftoken);
+            },
+            success: function(data) {
+                console.log("AJAX request successful. Data received:", JSON.stringify(data, null, 2));
+                // Update the form HTML regardless of the result
+                $('#buy_stock_form').html(data.buy_form_html);
+                // If the form submission was successful, do something
+                if (data.result === 'success') {
+                    // You can add any additional actions here
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log("Buy form submission failed.");
+                console.log("Status:", textStatus);
+                console.log("Error:", errorThrown);
+            }
+        });
+    });
+    
+    $(document).on('submit', '#sell_stock_form', function(e){
+      console.log("Sell form submit event triggered");
+      e.preventDefault();
+      
+      var stock = $('#id_stock').val();  // Target the stock field by its id
+      var quantity = $('#id_quantity').val();  // Target the quantity field by its id
+      console.log("Stock:", stock);  // Log the stock value
+      console.log("Quantity:", quantity);  // Log the quantity value
+      if (!stock || !quantity) {
+        alert('Please select a stock and enter a quantity.');
+        return;
+      }
+    
+      var formData = {  // Construct the data object manually
+        'stock': stock,
+        'quantity': quantity
+      };
+      console.log("Form data:", formData);  // Log the form data
+    
+      console.log("About to send AJAX request");
+    
+      $.ajax({
+          url: sellStockViewUrl,
+          method: 'POST',
+          data: formData,  // Use the form data in the AJAX request
+          beforeSend: function(xhr) {
+              xhr.setRequestHeader('X-CSRFToken', csrftoken);
+          },
+          success: function(data) {
+              console.log("AJAX request successful. Data received:", JSON.stringify(data, null, 2));
+              // Update the form HTML regardless of the result
+              $('#sell_stock_form').html(data.sell_form_html);
+              // If the form submission was successful, do something
+              if (data.result === 'success') {
+                  // You can add any additional actions here
+              }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+              console.log("Sell form submission failed.");
+              console.log("Status:", textStatus);
+              console.log("Error:", errorThrown);
+          }
+      });
+    });
+});
+</script>
+{% endblock %}
+</html>

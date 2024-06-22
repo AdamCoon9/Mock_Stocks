@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    
+</head>
+<body>
+{% block content %}
+  <h2>Login</h2>
+  <form method="post">
+    {% csrf_token %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="{% url 'home' %}">Mock Stocks</a>
+      <div class="collapse navbar-collapse">
+          <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'create_profile_view' %}">Register</a>
+              </li>   
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'transaction_history' %}">Transaction History</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'portfolio' %}">Portfolio</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'stocks' %}">Stocks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+          </li> 
+          </ul>
+      </div>
+  </nav>
+    <table>
+      <tr>
+        <td><label for="id_username">Username:</label></td>
+        <td><input type="text" name="username" id="id_username" required></td>
+      </tr>
+      <tr>
+        <td><label for="id_password">Password:</label></td>
+        <td><input type="password" name="password" id="id_password" required></td>
+      </tr>
+      <tr>
+        <td><label for="id_remember">Remember me:</label></td>
+        <td><input type="checkbox" name="remember" id="id_remember"></td>
+      </tr>
+    </table>
+    <button type="submit">Login</button>
+  </form>
+  <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+{% endblock %}
+</body>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Home</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'home' %}">Mock Stocks</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'create_profile_view' %}">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>   
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'portfolio' %}">Portfolio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'stocks' %}">Stocks</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+    {% load static %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<h1>Transaction History</h1>
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Stock</th>
+        <th>Quantity</th>
+        <th>Price</th>
+    </tr>
+    {% for transaction in transactions %}
+    <tr>
+        <td>{{ transaction.transaction_date }}</td>
+        <td>{{ transaction.stock.symbol }}</td>
+        <td>{{ transaction.num_shares }}</td>
+        <td>{{ transaction.transaction_price }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h1>Portfolio Value</h1>
+<canvas id="portfolioValueChart"></canvas>
+<script>
+var ctx = document.getElementById('portfolioValueChart').getContext('2d');
+var chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ portfolio_value|safe }},
+        datasets: [{
+            label: 'Portfolio Value',
+            data: {{ portfolio_value|safe }},
+            fill: false,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+        }]
+    }
+});
+</script>
+</body>
