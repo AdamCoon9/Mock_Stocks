@@ -47,7 +47,7 @@
 </nav>
 <div class="trading-screen">
   <div class="instrument-list">
-    <label for="stocks">Choose a stock:</label>
+    <label for="stocks">Choose a stock to view chart:</label>
     <select name="stocks" id="stocks">
       <option value="">Select one</option>
       {% for stock in stocks %}
@@ -157,15 +157,20 @@ $(document).ready(function(){
       console.log("Sell form submit event triggered");
       e.preventDefault();
       
-     /* var stock = $('#id_stock').val();  
+
+      /*console.dir($(this.stock));
+      console.dir($(this.quantity));
+
+      var stock = $('#id_stock').val();  
       var quantity = $('#id_quantity').val();  
+
       console.log("Stock:", stock);  
       console.log("Quantity:", quantity);
+      e.preventDefault();
       if (!stock || !quantity) {
         alert('Please select a stock and enter a quantity.');
         return;
       }
-    
       var formData = { 
         'stock': stock,
         'quantity': quantity

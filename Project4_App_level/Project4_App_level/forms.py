@@ -19,12 +19,15 @@ class SellStockForm(forms.Form):
         self.user = kwargs.pop('user', None)
         super(SellStockForm, self).__init__(*args, **kwargs)
 
-        user_stock_ids = []
-        # filter by user's stocks
+        portfolio_stock_ids = []
+        # for p in Portfolio.objects.all():
         for p in Portfolio.objects.filter(user=self.user):
-           user_stock_ids.append(p.stock_id);
-        
-        self.fields['stock'].queryset = Stock.objects.filter(pk_in=user_stock_ids)
+            portfolio_stock_ids.append(p.stock.id)
+
+        print("portfolio_stock_ids")
+        print(portfolio_stock_ids)
+
+        self.fields['stock'].queryset = Stock.objects.filter(pk__in=[1,3,5])
 
 
 class UserProfileForm(forms.ModelForm):
