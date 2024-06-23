@@ -167,7 +167,9 @@ def register_and_create_profile(request):
 
             # Save the user
             try:
+                print("IMMA SAVE USER")
                 user = form.save()
+                print(user)
             except Exception as e:
                 messages.error(request, 'Error creating user: {}'.format(e))
                 return render(request, './create_profile.html', {'form': form})
