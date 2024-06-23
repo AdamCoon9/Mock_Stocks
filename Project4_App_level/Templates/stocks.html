@@ -54,6 +54,7 @@
         <option value="{{ stock.id }}">{{ stock.name }}</option>
       {% endfor %}
     </select>
+
     <p id="price"></p>
   </div>
   <div class="instrument-data">
@@ -87,33 +88,28 @@ var buyStockViewUrl = "{% url 'buy_stock_view' %}";
 var sellStockViewUrl = "{% url 'sell_stock_view' %}";
 
 $(document).ready(function(){
+    $('#chart').hide()
     $('#stocks').change(function(){
   
         var url = "/get_stock_info/";
         var stockId = $('#stocks').val();
-        console.log("Sending AJAX request to:", url);
-        console.log("Stock ID:", stockId);
-  
+
         $.ajax({
             url: url,
             data: {
                 'stock_id': stockId
             },
-            success: function(response_data) {
-                console.log("AJAX request successful. Data received:", response_data);
-                
-                $('#price').text(response_data.price);
+            success: function(response_data) {               
+                $('#price').html(`<h5>Current Stock Price: $${response_data.price}</h5>`);
                 $('#sell_stock_form').html(response_data.sell_form_html);
                 $('#sell_stock_form').show();
-                console.log("Showing sell form.");
 
                 
                 $('#buy_stock_form').html(response_data.buy_form_html);
                 $('#buy_stock_form').show(); 
-                console.log("Showing buy form.");
-
                 
                 document.getElementById('chart').src = 'data:image/png;base64,' + response_data.image;
+                $('#chart').show()
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log("AJAX request failed.");
