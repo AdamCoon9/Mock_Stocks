@@ -340,15 +340,40 @@ def sell_stock_view(request):
             stock = form.cleaned_data['stock']
             quantity = form.cleaned_data['quantity']
 
+
+
+
+            # Fetch the user's UserProfile
+            user_profile = UserProfile.objects.get(user=request.user)
+
+            # Fetch the user's holdings
+            holding = UserStock.objects.filter(user=user_profile, stock=stock)
+
+            print("holding")
+            print(holding)
+            user_stock_quantity = 0
+            for h in holding:
+                user_stock_quantity += h.quantity
+
             # Check if the user owns enough of this stock to sell
-            if stock.quantity >= quantity:
-                stock.quantity -= quantity
-                stock.save()
+            if user_stock_quantity >= quantity:
+                  # Update the user's UserStock
+                user_stock, created = UserStock.objects.get_or_create(
+                    user=user_profile, 
+                    stock=stock, 
+                    defaults={'quantity': 0}
+                )
+                if created:
+                    user_stock.quantity = (quantity * -1)
+                else:
+                    user_stock.quantity += (quantity * -1)
+                user_stock.save()
+
 
                 # Add the total cost to the user's balance
                 total_cost = stock.current_price * quantity
                 user_profile = UserProfile.objects.get(user=request.user)
-                user_profile.balance += total_cost
+                user_profile.balance += float(total_cost)
                 user_profile.save()
 
                 # Create a new transaction
