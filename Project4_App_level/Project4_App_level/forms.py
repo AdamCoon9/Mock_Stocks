@@ -1,5 +1,5 @@
 from django import forms
-from .models import Stock, UserProfile
+from .models import Portfolio, Stock, UserProfile
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 class TradeForm(forms.Form):
@@ -18,7 +18,13 @@ class SellStockForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(SellStockForm, self).__init__(*args, **kwargs)
-        self.fields['stock'].queryset = Stock.objects.filter(portfolio__user=self.user)
+
+        user_stock_ids = []
+        # filter by user's stocks
+        for p in Portfolio.objects.filter(user=self.user):
+           user_stock_ids.append(p.stock_id);
+        
+        self.fields['stock'].queryset = Stock.objects.filter(pk_in=user_stock_ids)
 
 
 class UserProfileForm(forms.ModelForm):

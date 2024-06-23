@@ -124,7 +124,7 @@ $(document).ready(function(){
     });
   
     
-    $(document).on('submit', '#buy_stock_form', function(e){
+    $('#buy_stock_form').on('submit', '#buy_stock_form', function(e){
         e.preventDefault();
         console.log("Buy form submitted");
         console.log("Data being sent:", $(this).serialize());  
@@ -153,11 +153,11 @@ $(document).ready(function(){
         });
     });
     
-    $(document).on('submit', '#sell_stock_form', function(e){
+    $('#sell_stock_form').on('submit', '#sell_stock_form', function(e){
       console.log("Sell form submit event triggered");
       e.preventDefault();
       
-      var stock = $('#id_stock').val();  
+     /* var stock = $('#id_stock').val();  
       var quantity = $('#id_quantity').val();  
       console.log("Stock:", stock);  
       console.log("Quantity:", quantity);
@@ -172,12 +172,12 @@ $(document).ready(function(){
       };
       console.log("Form data:", formData); 
     
-      console.log("About to send AJAX request");
+      console.log("About to send AJAX request");*/
     
       $.ajax({
           url: sellStockViewUrl,
           method: 'POST',
-          data: formData, 
+          data: $(this).serialize(),
           beforeSend: function(xhr) {
               xhr.setRequestHeader('X-CSRFToken', csrftoken);
           },
