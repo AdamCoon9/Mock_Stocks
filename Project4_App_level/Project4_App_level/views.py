@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.db import models
 from django.http import JsonResponse
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import PasswordResetView 
 from django.views import View
@@ -137,6 +137,11 @@ def login_request(request):
     else:
         return render(request, './login.html')
     
+def logout_page(request):
+    logout(request)
+    return render(request, './logout.html')
+
+
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField()

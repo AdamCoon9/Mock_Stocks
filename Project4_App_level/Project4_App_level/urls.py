@@ -6,6 +6,7 @@ from .views import reset_account, buy_stock_view, sell_stock_view, transaction_h
 urlpatterns = [
     path('create_profile/', views.register_and_create_profile, name='create_profile_view'),
     path('login/', views.login, name='login'),
+    path('logout/', views.logout_page, name='logout'),
     path('reset_account/', views.reset_account, name='reset_account'),
     path('buy_stock_view/', views.buy_stock_view, name='buy_stock_view'),
     path('sell_stock_view/', views.sell_stock_view, name='sell_stock_view'),
